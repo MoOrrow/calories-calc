@@ -1,0 +1,102 @@
+@use '/src/styles/helpers';
+
+.activity-form {
+  margin: 30px 0 0;
+}
+
+.form-wrapper {
+  margin: 20px 0 0;
+  padding: 12px 20px;
+  background: helpers.$form-bg;
+  border: 1px solid helpers.$form-border;
+  border-radius: 4px;
+}
+
+.form-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 0;
+  flex-direction: column;
+  margin: 12px 0 0;
+}
+
+.form-field {
+  display: flex;
+  align-items: baseline;
+
+  input {
+    max-width: 200px;
+  }
+}
+
+.field-number {
+  width: 100%;
+}
+
+.gender-label,
+.result-prefix {
+  margin: 0 8px 0 0;
+  flex-shrink: 0;
+}
+
+.input-suffix {
+  margin: 0 0 0 8px;
+  font-size: 14px;
+}
+
+.result-group {
+  margin-top: 45px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.result-title,
+.result-value {
+  font-size: 16px;
+}
+
+.result-title {
+  margin: 0 10px 0 0;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 50px 0 0;
+}
+
+@include helpers.respond('md') {
+  .form-wrapper {
+    margin: 30px 0 0;
+    padding: 34px 32px 44px;
+  }
+
+  .form-fields {
+    flex-direction: row;
+    gap: 15px 30px;
+    font-size: 16px;
+    margin: 20px 0 0;
+  }
+
+  .form-field {
+    min-width: 320px;
+
+    input {
+      max-width: none;
+    }
+  }
+
+  .gender-wrapper {
+    flex-grow: 1;
+    width: 100%;
+  }
+
+  .result-group {
+    margin-top: 55px;
+  }
+
+  .result-title,
+  .result-value {
+    font-size: 18px;
+  }
+}

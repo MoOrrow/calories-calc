@@ -1,0 +1,23 @@
+@use '/src/styles/helpers';
+
+$titleSizes: 38, 30, 24, 20, 18;
+
+@for $i from 1 through length($titleSizes) {
+  $c: nth($titleSizes, $i);
+  .title-h#{$i} {
+    font-size: calc(#{$c}px - 6px);
+
+    @include helpers.respond('md') {
+      font-size: calc(#{$c}px - 4px);
+    }
+    @include helpers.respond('lg') {
+      font-size: #{$c}px;
+    }
+  }
+}
+
+@for $i from 1 through 9 {
+  .weight-#{$i * 100} {
+    font-weight: ($i * 100);
+  }
+}

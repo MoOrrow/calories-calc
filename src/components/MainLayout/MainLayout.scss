@@ -1,0 +1,21 @@
+@use '/src/styles/helpers';
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.layout-content {
+  flex-grow: 1;
+}
+
+.main-wrapper {
+  padding: 20px;
+}
+
+@include helpers.respond('md') {
+  .main-wrapper {
+    padding: 38px 30px 42px;
+  }
+}
