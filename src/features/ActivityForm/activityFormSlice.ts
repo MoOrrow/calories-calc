@@ -1,7 +1,8 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { Status } from 'utils';
-import { ActivityFromGender, FORM_SLICE_NAME } from './ActivityForm.consts';
+import { ActivityFromGender, SLICE_NAME } from './ActivityForm.consts';
 import { ActivityFormState, ActivityFormValues } from './ActivityForm.types';
+import { RootState } from 'app/store';
 
 const initialState: ActivityFormState = {
   totalCalories: 0,
@@ -15,7 +16,7 @@ const initialState: ActivityFormState = {
 };
 
 export const activityFormSlice = createSlice({
-  name: FORM_SLICE_NAME,
+  name: SLICE_NAME,
   initialState,
   reducers: {
     setCalcValues: (state, action: PayloadAction<ActivityFormValues>) => {
@@ -48,6 +49,11 @@ export const activityFormSlice = createSlice({
     },
   },
 });
+
+export const selectCalcValues = (state: RootState) =>
+  state.activityForm.calcValues;
+export const selectTotalCalories = (state: RootState) =>
+  state.activityForm.totalCalories;
 
 export const {
   setCalcValues,

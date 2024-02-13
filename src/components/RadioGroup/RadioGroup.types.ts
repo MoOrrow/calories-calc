@@ -1,4 +1,4 @@
-import { RadioChangeEvent } from 'antd';
+import { RadioChangeEvent, RadioGroupProps } from 'antd';
 import { ReactNode } from 'react';
 import { TSize } from 'utils';
 
@@ -7,7 +7,7 @@ export type TRadioGroup = {
   onChange?: (e: RadioChangeEvent) => void;
   disabled?: boolean;
   children: ReactNode | ReactNode[];
-  defaultValue: string | number;
+  defaultValue?: string | number;
   buttonStyle?: 'solid' | 'outline';
   size?: TSize;
-};
+} & RadioGroupProps;

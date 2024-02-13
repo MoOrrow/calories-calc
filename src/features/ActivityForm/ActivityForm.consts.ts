@@ -1,5 +1,5 @@
 export const TITLE = 'Подсчет базовых калорий';
-export const FORM_SLICE_NAME = 'activityForm';
+export const SLICE_NAME = 'activityForm';
 
 export enum ActivityFormFieldNames {
   gender = 'gender',

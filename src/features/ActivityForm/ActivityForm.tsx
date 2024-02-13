@@ -24,6 +24,8 @@ import { ActivityFormValues, TInputFormFields } from './ActivityForm.types';
 import {
   calculateTotalCalories,
   resetForm,
+  selectCalcValues,
+  selectTotalCalories,
   setCalcValues,
 } from './activityFormSlice';
 
@@ -31,8 +33,8 @@ export const ActivityForm: React.FC = () => {
   const id = useId();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const calories = useAppSelector((state) => state.activityForm.totalCalories);
-  const calcValues = useAppSelector((state) => state.activityForm.calcValues);
+  const calories = useAppSelector(selectTotalCalories);
+  const calcValues = useAppSelector(selectCalcValues);
   const { age, gender, weight, height } = calcValues;
   const dispatch = useAppDispatch();
 

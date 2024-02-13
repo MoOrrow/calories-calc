@@ -2,7 +2,7 @@ import { MainLayout, Steps } from 'components';
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { calcStepItems } from './const';
-import { ActivityForm, IntroduceForm } from 'features';
+import { ActivityForm, EfficientForm } from 'features';
 
 export const CalcPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -11,22 +11,22 @@ export const CalcPage: React.FC = () => {
   useEffect(() => {
     setCurrentStep(Number(queryStep));
   }, [queryStep]);
-  const changeStep = useCallback(
+  /* const changeStep = useCallback(
     (value: number) => {
       searchParams.set('step', value.toString());
       setSearchParams(searchParams);
     },
     [searchParams, setSearchParams]
-  );
+  ); */
   return (
     <MainLayout>
       <Steps
-        onChange={changeStep}
+        /* onChange={changeStep} */
         current={currentStep}
         items={calcStepItems}
       ></Steps>
       {currentStep === 0 && <ActivityForm />}
-      {currentStep === 1 && <IntroduceForm />}
+      {currentStep === 1 && <EfficientForm />}
       {currentStep === 2 && <div>Шаг 3</div>}
     </MainLayout>
   );

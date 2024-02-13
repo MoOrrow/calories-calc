@@ -4,7 +4,11 @@ export * from './MainLayout';
 export * from './RadioButton';
 export * from './RadioGroup';
 export * from './Input';
+export * from './InputNumber';
 export * from './Title';
 export * from './Button';
-export * from './Form'
-export * from './FormItem'
+export * from './Form';
+export * from './FormItem';
+export * from './Tabs';
+export * from './Space';
+export * from './Table';
