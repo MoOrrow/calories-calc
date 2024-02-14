@@ -90,8 +90,6 @@ export const IndividualCalc: React.FC = () => {
           return null;
         }
 
-        console.log(record.coefficent);
-
         return (
           <div>
             {contextHolder}

@@ -50,7 +50,6 @@ export const EfficientFormSlice = createSlice({
     calculateTotalDuration: (state) => {
       state.totalDuration = Object.values(state.durationHash).reduce(
         (curr, next) => {
-          console.log({ curr, next: current(next) });
           return curr + next.duration;
         },
         0

@@ -6,7 +6,6 @@ export const isEmpty = <T>(val: T): boolean => {
       break;
     case 'number':
       typeCondition = val !== 0 && !isNaN(Number(val));
-      console.log({ typeCondition });
       break;
   }
 
