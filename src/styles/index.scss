@@ -1,3 +1,5 @@
+@use '/src/styles/helpers';
+
 body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
@@ -12,4 +14,19 @@ code {
 
 p {
   margin: 0;
+}
+
+.notification {
+  &-success {
+    background-color: helpers.$succesBg;
+  }
+  &-error {
+    background-color: helpers.$errorBg;
+  }
+  &-info {
+    background-color: helpers.$infoBg;
+  }
+  &-warning {
+    background-color: helpers.$warningBg;
+  }
 }

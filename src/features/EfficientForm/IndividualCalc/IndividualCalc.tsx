@@ -1,28 +1,79 @@
-import { Form, Table } from 'antd';
-import { Column, FormItem, InputNumber } from 'components';
-import { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react';
-import {
-  TDataChild,
-  TDataSource,
-  TIndividualCalc,
-} from './IndividualCalc.types';
-import './IndividualCalc.scss';
-import { WindowSize, debounce, useWindowSize } from 'utils';
+import { Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { selectPersonalCalcData } from '../efficientFormSlice';
+import cn from 'classnames';
+import { InputNumber } from 'components';
+import { useEffect } from 'react';
+import {
+  NotificationTypes,
+  WindowSize,
+  useNotification,
+  useWindowSize,
+} from 'utils';
+import {
+  calculateTotalCoefficentFromData,
+  calculateTotalDuration,
+  changePersonalCalcData,
+  resetTotalCoefficent,
+  selectDurationHash,
+  selectPersonalCalcData,
+  selectTotalCoefficent,
+  selectTotalDuration,
+  setDuration,
+} from '../efficientFormSlice';
+import './IndividualCalc.scss';
+import {
+  TIndividualCalcData,
+  TIndividualCalcDataChild,
+} from './IndividualCalc.types';
 
-export const IndividualCalc: React.FC<TIndividualCalc> = ({ dataSource }) => {
-  const [form] = Form.useForm();
-  const [data, setData] = useState(dataSource);
-  const [reachGoal, setReachGoal] = useState(24);
+export const IndividualCalc: React.FC = () => {
+  const { width } = useWindowSize();
   const dispatch = useAppDispatch();
   const calcData = useAppSelector(selectPersonalCalcData);
-  const { width } = useWindowSize();
+  const totalDuration = useAppSelector(selectTotalDuration);
+  const durationHash = useAppSelector(selectDurationHash);
+  const totalCoefficent = useAppSelector(selectTotalCoefficent);
+  const { contextHolder, openNotification } = useNotification({
+    message: 'Сумма занчения полей не должна превышать 24 часа',
+    duration: 2,
+  });
+
   useEffect(() => {
-    console.log(data);
-  }, [data]);
-  const columns: ColumnsType<TDataSource> = [
+    if (totalDuration !== 24) {
+      dispatch(resetTotalCoefficent());
+    } else {
+      dispatch(calculateTotalCoefficentFromData());
+    }
+  }, [totalDuration]);
+
+  const handleBlur = ({
+    value,
+    key,
+    coefficent,
+  }: {
+    value: number;
+    key: number;
+    coefficent: number;
+  }) => {
+    if (value >= 0) {
+      dispatch(
+        setDuration({
+          [key]: { duration: value, coefficent: value * coefficent },
+        })
+      );
+      dispatch(changePersonalCalcData());
+      dispatch(calculateTotalDuration());
+    }
+  };
+
+  useEffect(() => {
+    if (totalDuration > 24) {
+      openNotification(NotificationTypes.error);
+    }
+  }, [totalDuration]);
+
+  const columns: ColumnsType<TIndividualCalcData> = [
     {
       title: 'Вид деятельности',
       dataIndex: 'name',
@@ -34,41 +85,31 @@ export const IndividualCalc: React.FC<TIndividualCalc> = ({ dataSource }) => {
       width: width < WindowSize.sm ? 140 : 200,
       key: 'key',
       align: 'center',
-      render: (record: TDataSource | TDataChild) => {
+      render: (record: TIndividualCalcData | TIndividualCalcDataChild) => {
         if (!('duration' in record)) {
           return null;
         }
 
-        /**
-         * @todo  перенести в слайс, избавить компонент от логики.
-         * Дописать в слейсе редюсер, принимающий ключ и значение поля
-         */
-        const handleInputChange = (
-          value: typeof record.duration = 0
-        ) => {
-          const newData = data.map((rootItem) => ({
-            ...rootItem,
-            children: rootItem.children.map((item) => ({
-              ...item,
-              duration: item.key === record.key ? value : item.duration,
-            })),
-          })) as TDataSource[];
-
-          console.log(newData);
-          setData(newData);
-        };
+        console.log(record.coefficent);
 
         return (
-          <FormItem className="form-item form-item-duration">
+          <div>
+            {contextHolder}
             <InputNumber
               controls={false}
-              defaultValue={record.duration}
-              onChange={debounce(handleInputChange, 300)}
+              value={record.duration}
               min={0}
               max={24}
+              onBlur={(e) =>
+                handleBlur({
+                  value: Number(e.target.value),
+                  key: record.key,
+                  coefficent: record.coefficent,
+                })
+              }
             />
             <p className="mobile-help">Коэффицент: {record.coefficent}</p>
-          </FormItem>
+          </div>
         );
       },
     },
@@ -82,42 +123,46 @@ export const IndividualCalc: React.FC<TIndividualCalc> = ({ dataSource }) => {
     },
   ];
   return (
-    <Form form={form} className="calc-form">
-      <div className="calc-wrapper">
-        <Table
-          bordered
-          pagination={false}
-          dataSource={[...data]}
-          columns={columns}
-          expandable={{
-            defaultExpandAllRows: true,
-          }}
-          scroll={{ x: width < WindowSize.sm ? 320 : 0 }}
-          summary={(record) => {
-            return (
-              <Table.Summary>
-                <Table.Summary.Row>
-                  <Table.Summary.Cell index={0} align="right">
-                    Значение должно быть равно 24 часам
-                  </Table.Summary.Cell>
-                  <Table.Summary.Cell index={1} align="center">
-                    {24 - reachGoal}
-                  </Table.Summary.Cell>
-                </Table.Summary.Row>
-                <Table.Summary.Row>
-                  <Table.Summary.Cell index={0} align="right">
-                    Твой коэффициент физической активности
-                  </Table.Summary.Cell>
-                  <Table.Summary.Cell index={1}></Table.Summary.Cell>
-                  <Table.Summary.Cell index={2} align="center">
-                    test
-                  </Table.Summary.Cell>
-                </Table.Summary.Row>
-              </Table.Summary>
-            );
-          }}
-        />
-      </div>
-    </Form>
+    <div className="calc-wrapper">
+      <Table
+        bordered
+        pagination={false}
+        dataSource={[...calcData]}
+        columns={columns}
+        expandable={{
+          defaultExpandAllRows: true,
+        }}
+        scroll={{ x: width < WindowSize.sm ? 320 : 0 }}
+        summary={(record) => {
+          return (
+            <Table.Summary>
+              <Table.Summary.Row>
+                <Table.Summary.Cell index={0} align="right">
+                  Значение должно быть равно 24 часам
+                </Table.Summary.Cell>
+                <Table.Summary.Cell
+                  index={1}
+                  align="center"
+                  className={cn('summary-cell', {
+                    'summary-cell-red': totalDuration > 24,
+                  })}
+                >
+                  {totalDuration}
+                </Table.Summary.Cell>
+              </Table.Summary.Row>
+              <Table.Summary.Row>
+                <Table.Summary.Cell index={0} align="right">
+                  Твой коэффициент физической активности
+                </Table.Summary.Cell>
+                <Table.Summary.Cell index={1}></Table.Summary.Cell>
+                <Table.Summary.Cell index={2} align="center">
+                  {totalCoefficent || 0}
+                </Table.Summary.Cell>
+              </Table.Summary.Row>
+            </Table.Summary>
+          );
+        }}
+      />
+    </div>
   );
 };

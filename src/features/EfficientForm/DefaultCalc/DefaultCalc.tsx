@@ -13,8 +13,6 @@ import React from 'react';
 
 export const DefaultCalc: React.FC<TDefaultCalc> = React.memo(
   ({ items, onChange }) => {
-    const [form] = Form.useForm();
-
     useEffect(() => {
       onChange(items[0].value);
     }, []);
@@ -23,27 +21,25 @@ export const DefaultCalc: React.FC<TDefaultCalc> = React.memo(
       onChange(e.target.value);
     };
     return (
-      <Form form={form} className="calc-form">
-        <FormItem rules={[{ required: true }]}>
-          <RadioGroup
-            optionType="default"
-            className="calc-radio-group"
-            defaultValue={items[0].value}
-          >
-            <Space direction="vertical">
-              {items.map(({ id, title, value }) => (
-                <RadioButton
-                  key={id}
-                  className="calc-radio"
-                  value={value}
-                  label={`${title} - ${value}`}
-                  onChange={handleRadioChange}
-                />
-              ))}
-            </Space>
-          </RadioGroup>
-        </FormItem>
-      </Form>
+      <div className="calc-wrapper">
+        <RadioGroup
+          optionType="default"
+          className="calc-radio-group"
+          defaultValue={items[0].value}
+        >
+          <Space direction="vertical">
+            {items.map(({ id, title, value }) => (
+              <RadioButton
+                key={id}
+                className="calc-radio"
+                value={value}
+                label={`${title} - ${value}`}
+                onChange={handleRadioChange}
+              />
+            ))}
+          </Space>
+        </RadioGroup>
+      </div>
     );
   }
 );

@@ -1,22 +1,17 @@
-import { Button, Tabs, Title, TitleVariant, TitleWeight } from 'components';
-import {
-  DEFAULT_CALC_VALUES,
-  PERSONAL_CALC,
-  TAB_ITEMS,
-  TITLE,
-} from './EfficientForm.consts';
-import './EfficientForm.scss';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { SyntheticEvent, useCallback, useEffect } from 'react';
+import { Button, Tabs, Title, TitleVariant, TitleWeight } from 'components';
+import { selectTotalCalories } from 'features/ActivityForm';
+import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { resetTotalCalories, selectTotalCalories } from 'features/ActivityForm';
 import { DefaultCalc } from './DefaultCalc';
+import { DEFAULT_CALC_VALUES, TAB_ITEMS, TITLE } from './EfficientForm.consts';
+import './EfficientForm.scss';
+import { IndividualCalc } from './IndividualCalc';
 import {
   resetTotalCoefficent,
   selectTotalCoefficent,
   setTotalCoefficent,
 } from './efficientFormSlice';
-import { IndividualCalc } from './IndividualCalc';
 
 export const EfficientForm: React.FC = () => {
   const calories = useAppSelector(selectTotalCalories);
@@ -35,11 +30,11 @@ export const EfficientForm: React.FC = () => {
     dispatch(resetTotalCoefficent());
   };
 
-  /* useEffect(() => {
-    if (!calories) {
+  useEffect(() => {
+    /* if (!calories) {
       navigate('/');
-    }
-  }, []); */
+    } */
+  }, []);
 
   return (
     <div className="introduce-layout">
@@ -65,7 +60,7 @@ export const EfficientForm: React.FC = () => {
                     items={DEFAULT_CALC_VALUES}
                   />
                 ) : (
-                  <IndividualCalc dataSource={PERSONAL_CALC}></IndividualCalc>
+                  <IndividualCalc></IndividualCalc>
                 ),
             }))}
             type="card"

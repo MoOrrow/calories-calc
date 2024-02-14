@@ -1,16 +1,13 @@
-export type TIndividualCalc = {
-  dataSource: TDataSource[];
-};
-
-export type TDataSource = {
+export type TIndividualCalcData = {
   key: number;
   name: string;
-  children: TDataChild[];
+  children: TIndividualCalcDataChild[];
 };
 
-export type TDataChild = {
+export type TIndividualCalcDataChild = {
   key: number;
   name: string;
   duration: number;
   coefficent: number;
+  coefficentByDuration: number;
 };
