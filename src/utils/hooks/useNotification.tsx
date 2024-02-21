@@ -8,15 +8,25 @@ export enum NotificationTypes {
   warning = 'warning',
 }
 
-export const useNotification = (config: NotificationArgsProps) => {
+export type TOpenNotification = {
+  type: NotificationTypes;
+  config: NotificationArgsProps;
+};
+
+export const useNotification = () => {
   const [api, contextHolder] = notification.useNotification();
 
   return {
     contextHolder,
-    openNotification: (type: NotificationTypes) => {
+    openNotification: ({
+      type,
+      config: { duration = 2, ...restConfig },
+    }: TOpenNotification) => {
+      api.destroy();
       api[type]({
-        ...config,
         className: cn('notification', `notification-${type}`),
+        duration,
+        ...restConfig,
       });
     },
   };

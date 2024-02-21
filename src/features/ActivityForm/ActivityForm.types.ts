@@ -15,10 +15,10 @@ export type TInputFormFields = {
 };
 
 export type ActivityFormValues = {
-  gender: ActivityFromGender;
-  weight: number | null;
-  height: number | null;
-  age: number | null;
+  [ActivityFormFieldNames.gender]: ActivityFromGender;
+  [ActivityFormFieldNames.height]: number | null;
+  [ActivityFormFieldNames.weight]: number | null;
+  [ActivityFormFieldNames.age]: number | null;
 };
 
 export type ActivityFormState = {

@@ -1,74 +1,83 @@
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { Button, Tabs, Title, TitleVariant, TitleWeight } from 'components';
 import { selectTotalCalories } from 'features/ActivityForm';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DefaultCalc } from './DefaultCalc';
-import { DEFAULT_CALC_VALUES, TAB_ITEMS, TITLE } from './EfficientForm.consts';
+import { EfficientTabs, TAB_ITEMS, TITLE } from './EfficientForm.consts';
 import './EfficientForm.scss';
 import { IndividualCalc } from './IndividualCalc';
 import {
-  resetTotalCoefficent,
+  resetEfficientForm,
+  selectCurrentTabId,
   selectTotalCoefficent,
-  setTotalCoefficent,
+  setCurrentTabId,
 } from './efficientFormSlice';
 
 export const EfficientForm: React.FC = () => {
   const calories = useAppSelector(selectTotalCalories);
   const coefficent = useAppSelector(selectTotalCoefficent);
+  const currentTab = useAppSelector(selectCurrentTabId);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const changeTotalCoefficent = useCallback(
-    (value: number) => {
-      dispatch(setTotalCoefficent(value));
-    },
-    [dispatch]
-  );
+  const handleTabClick = (id: EfficientTabs) => {
+    dispatch(resetEfficientForm());
+    dispatch(setCurrentTabId(id));
+  };
 
-  const handleTabClick = () => {
-    dispatch(resetTotalCoefficent());
+  const onNextButtonClick = () => {
+    navigate('/form?step=2');
   };
 
   useEffect(() => {
-    /* if (!calories) {
-      navigate('/');
-    } */
-  }, []);
+    if (!calories) {
+      navigate('/form?step=0', { state: { from: 'step=1' } });
+    }
+  }, [calories, navigate]);
 
   return (
-    <div className="introduce-layout">
+    <div className="efficient">
       <Title
-        className="layout-title"
+        className="title"
         variant={TitleVariant.h2}
         weight={TitleWeight.medium}
       >
         {TITLE}
       </Title>
-      <div className="layout-wrapper">
+      <div className="content-wrapper">
         <div className="tab-container">
           <Tabs
-            onTabClick={handleTabClick}
-            defaultActiveKey="1"
+            onTabClick={(value) => {
+              handleTabClick(value as EfficientTabs);
+            }}
+            defaultActiveKey={EfficientTabs.default}
             items={TAB_ITEMS.map(({ id, label }) => ({
-              key: id.toString(),
+              key: id,
               label: label,
-              children:
-                id === 0 ? (
-                  <DefaultCalc
-                    onChange={changeTotalCoefficent}
-                    items={DEFAULT_CALC_VALUES}
-                  />
-                ) : (
-                  <IndividualCalc></IndividualCalc>
-                ),
             }))}
             type="card"
           />
+          {currentTab === EfficientTabs.default && <DefaultCalc />}
+          {currentTab === EfficientTabs.individual && <IndividualCalc />},
         </div>
       </div>
       <div className="button-wrapper">
-        <Button disabled={!coefficent} type="primary" className="button-submit">
+        <Button
+          type="default"
+          className="button-back"
+          onClick={() => navigate('/form?step=0')}
+          icon={<ArrowLeftOutlined />}
+        >
+          Назад
+        </Button>
+        <Button
+          disabled={!coefficent}
+          type="primary"
+          className="button-submit"
+          onClick={onNextButtonClick}
+        >
           Далее
         </Button>
       </div>

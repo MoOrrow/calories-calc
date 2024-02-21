@@ -5,12 +5,12 @@ import { ActivityFormState, ActivityFormValues } from './ActivityForm.types';
 import { RootState } from 'app/store';
 
 const initialState: ActivityFormState = {
-  totalCalories: 0,
+  totalCalories: process.env.NODE_ENV === 'development' ? 1500 : 0,
   calcValues: {
     gender: ActivityFromGender.female,
-    weight: null,
-    height: null,
-    age: null,
+    weight: process.env.NODE_ENV === 'development' ? 55 : null,
+    height: process.env.NODE_ENV === 'development' ? 165 : null,
+    age: process.env.NODE_ENV === 'development' ? 24 : null,
   },
   calculateStatus: Status.init,
 };

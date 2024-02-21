@@ -1,4 +1,5 @@
 import { InputNumber, RadioChangeEvent } from 'antd';
+import { NotificationContext } from 'app';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import {
   Button,
@@ -10,8 +11,9 @@ import {
   TitleVariant,
   TitleWeight,
 } from 'components';
-import { useEffect, useId } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useContext, useEffect, useId } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { NotificationTypes } from 'utils';
 import {
   ActivityFormFieldNames,
   ActivityFromGender,
@@ -28,15 +30,18 @@ import {
   selectTotalCalories,
   setCalcValues,
 } from './activityFormSlice';
+import { debounce } from 'lodash';
 
 export const ActivityForm: React.FC = () => {
   const id = useId();
   const navigate = useNavigate();
+  const location = useLocation();
   const [form] = Form.useForm();
   const calories = useAppSelector(selectTotalCalories);
   const calcValues = useAppSelector(selectCalcValues);
   const { age, gender, weight, height } = calcValues;
   const dispatch = useAppDispatch();
+  const openNotification = useContext(NotificationContext);
 
   useEffect(() => {
     form.setFieldsValue({
@@ -46,6 +51,17 @@ export const ActivityForm: React.FC = () => {
       [ActivityFormFieldNames.weight]: weight,
     });
   }, []);
+
+  useEffect(() => {
+    if (location?.state?.from === 'step=1') {
+      openNotification({
+        type: NotificationTypes.info,
+        config: {
+          message: 'Необходимо заполнить форму "Подсчет базовых калорий"',
+        },
+      });
+    }
+  }, [location, openNotification]);
 
   const inputFormFields: TInputFormFields[] = [
     {
@@ -79,11 +95,30 @@ export const ActivityForm: React.FC = () => {
         [ActivityFormFieldNames.gender]: e.target.value,
       } as ActivityFormValues)
     );
+    dispatch(calculateTotalCalories());
   };
 
-  useEffect(() => {
+  const handleInputChange = ({
+    name,
+    value,
+  }: {
+    name: string;
+    value: number;
+  }) => {
+    dispatch(
+      setCalcValues({
+        [name as ActivityFormFieldNames]: value,
+      } as any)
+    );
     dispatch(calculateTotalCalories());
-  }, [calcValues, dispatch]);
+  };
+
+  const debouncedHandleInputChange = useCallback(
+    debounce(handleInputChange, 200),
+    []
+  );
+
+  useEffect(() => {}, [calcValues]);
 
   const onFinish = () => {
     navigate('/form?step=1');
@@ -148,11 +183,10 @@ export const ActivityForm: React.FC = () => {
                   placeholder={item.placeholder}
                   defaultValue={item.defaultValue}
                   onChange={(value: any) =>
-                    dispatch(
-                      setCalcValues({
-                        [item.name]: value,
-                      } as ActivityFormValues)
-                    )
+                    debouncedHandleInputChange({
+                      name: item.name,
+                      value: value,
+                    })
                   }
                   controls={false}
                 />

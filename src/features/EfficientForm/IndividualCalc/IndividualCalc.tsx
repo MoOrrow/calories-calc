@@ -1,53 +1,59 @@
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import { NotificationContext } from 'app';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import cn from 'classnames';
 import { InputNumber } from 'components';
-import { useEffect } from 'react';
-import {
-  NotificationTypes,
-  WindowSize,
-  useNotification,
-  useWindowSize,
-} from 'utils';
+import React, { useCallback, useContext, useEffect } from 'react';
+import { NotificationTypes, WindowSize, useWindowSize } from 'utils';
 import {
   calculateTotalCoefficentFromData,
   calculateTotalDuration,
-  changePersonalCalcData,
+  changepersonalCalcDataSource,
   resetTotalCoefficent,
-  selectDurationHash,
-  selectPersonalCalcData,
   selectTotalCoefficent,
   selectTotalDuration,
-  setDuration,
+  selectpersonalCalcDataSource,
+  setCalcData,
 } from '../efficientFormSlice';
 import './IndividualCalc.scss';
 import {
   TIndividualCalcData,
   TIndividualCalcDataChild,
 } from './IndividualCalc.types';
+import { debounce } from 'lodash';
 
-export const IndividualCalc: React.FC = () => {
+export const IndividualCalc: React.FC = React.memo(() => {
   const { width } = useWindowSize();
   const dispatch = useAppDispatch();
-  const calcData = useAppSelector(selectPersonalCalcData);
+  const calcData = useAppSelector(selectpersonalCalcDataSource);
   const totalDuration = useAppSelector(selectTotalDuration);
-  const durationHash = useAppSelector(selectDurationHash);
   const totalCoefficent = useAppSelector(selectTotalCoefficent);
-  const { contextHolder, openNotification } = useNotification({
-    message: 'Сумма занчения полей не должна превышать 24 часа',
-    duration: 2,
-  });
+  const openNotification = useContext(NotificationContext);
+
+  useEffect(() => {
+    if (totalDuration > 24) {
+      openNotification({
+        type: NotificationTypes.error,
+        config: {
+          message: 'Сумма занчения полей не должна превышать 24 часа',
+          duration: 2,
+        },
+      });
+    }
+  }, [totalDuration, openNotification]);
 
   useEffect(() => {
     if (totalDuration !== 24) {
-      dispatch(resetTotalCoefficent());
+      if (totalCoefficent) {
+        dispatch(resetTotalCoefficent());
+      }
     } else {
       dispatch(calculateTotalCoefficentFromData());
     }
-  }, [totalDuration]);
+  }, [totalDuration, totalCoefficent, dispatch]);
 
-  const handleBlur = ({
+  const handleChange = ({
     value,
     key,
     coefficent,
@@ -58,20 +64,16 @@ export const IndividualCalc: React.FC = () => {
   }) => {
     if (value >= 0) {
       dispatch(
-        setDuration({
+        setCalcData({
           [key]: { duration: value, coefficent: value * coefficent },
         })
       );
-      dispatch(changePersonalCalcData());
+      dispatch(changepersonalCalcDataSource());
       dispatch(calculateTotalDuration());
     }
   };
 
-  useEffect(() => {
-    if (totalDuration > 24) {
-      openNotification(NotificationTypes.error);
-    }
-  }, [totalDuration]);
+  const handleDebouncedChange = useCallback(debounce(handleChange, 200), []);
 
   const columns: ColumnsType<TIndividualCalcData> = [
     {
@@ -92,15 +94,14 @@ export const IndividualCalc: React.FC = () => {
 
         return (
           <div>
-            {contextHolder}
             <InputNumber
               controls={false}
+              defaultValue={record.duration}
               value={record.duration}
               min={0}
-              max={24}
-              onBlur={(e) =>
-                handleBlur({
-                  value: Number(e.target.value),
+              onChange={(value) =>
+                handleDebouncedChange({
+                  value: Number(value),
                   key: record.key,
                   coefficent: record.coefficent,
                 })
@@ -121,7 +122,7 @@ export const IndividualCalc: React.FC = () => {
     },
   ];
   return (
-    <div className="calc-wrapper">
+    <div className="individual-calc-wrapper">
       <Table
         bordered
         pagination={false}
@@ -145,7 +146,9 @@ export const IndividualCalc: React.FC = () => {
                     'summary-cell-red': totalDuration > 24,
                   })}
                 >
-                  {totalDuration}
+                  <div tabIndex={0} id="duration">
+                    {totalDuration}
+                  </div>
                 </Table.Summary.Cell>
               </Table.Summary.Row>
               <Table.Summary.Row>
@@ -153,7 +156,13 @@ export const IndividualCalc: React.FC = () => {
                   Твой коэффициент физической активности
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={1}></Table.Summary.Cell>
-                <Table.Summary.Cell index={2} align="center">
+                <Table.Summary.Cell
+                  index={2}
+                  align="center"
+                  className={cn('total-coefficent', {
+                    'total-coefficent-fill': !!totalCoefficent,
+                  })}
+                >
                   {totalCoefficent || 0}
                 </Table.Summary.Cell>
               </Table.Summary.Row>
@@ -163,4 +172,4 @@ export const IndividualCalc: React.FC = () => {
       />
     </div>
   );
-};
+});

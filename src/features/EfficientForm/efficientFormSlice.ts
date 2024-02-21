@@ -1,54 +1,58 @@
-import { PayloadAction, createSlice, current } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { RootState } from 'app/store';
-import { PERSONAL_CALC, SLICE_NAME } from './EfficientForm.consts';
+import {
+  EfficientTabs,
+  PERSONAL_CALC,
+  SLICE_NAME,
+} from './EfficientForm.consts';
 import { TIndividualCalcData } from './IndividualCalc';
 
-type TDuratuionHash = Record<string, { duration: number; coefficent: number }>;
+type TCalcData = Record<string, { duration: number; coefficent: number }>;
 
 type TInitialState = {
   totalCoefficent: number | null;
-  personalCalcData: TIndividualCalcData[];
+  personalCalcDataSource: TIndividualCalcData[];
   totalDuration: number;
-  durationHash: TDuratuionHash;
+  calcData: TCalcData;
+  currentTabId: EfficientTabs;
 };
 
 const initialState: TInitialState = {
-  totalCoefficent: null,
-  personalCalcData: PERSONAL_CALC,
-  durationHash: {},
+  totalCoefficent: process.env.NODE_ENV === 'development' ? 1.75 : null,
+  personalCalcDataSource: PERSONAL_CALC,
+  calcData: {},
   totalDuration: 0,
+  currentTabId: EfficientTabs.default,
 };
 
-export const EfficientFormSlice = createSlice({
+export const efficientFormSlice = createSlice({
   name: SLICE_NAME,
   initialState: initialState,
   reducers: {
-    setTotalCoefficent: (state, action: PayloadAction<number>) => {
-      state.totalCoefficent = action.payload;
+    setCalcData: (state, action: PayloadAction<TCalcData>) => {
+      state.calcData = { ...state.calcData, ...action.payload };
     },
-    setDuration: (state, action: PayloadAction<TDuratuionHash>) => {
-      state.durationHash = { ...state.durationHash, ...action.payload };
+    resetCalcData: (state) => {
+      state.calcData = initialState.calcData;
     },
     resetTotalCoefficent: (state) => {
       state.totalCoefficent = null;
     },
-    changePersonalCalcData: (state) => {
-      state.personalCalcData = state.personalCalcData.map((rootItem) => ({
-        ...rootItem,
-        children: rootItem.children.map((item) => ({
-          ...item,
-          duration: state.durationHash[item.key]?.duration ?? item.duration,
-          coefficentByDuration:
-            state.durationHash[item.key]?.coefficent ??
-            item.coefficentByDuration,
-        })),
-      }));
-    },
-    resetCalcData: (state) => {
-      state.personalCalcData = PERSONAL_CALC;
+    changepersonalCalcDataSource: (state) => {
+      state.personalCalcDataSource = state.personalCalcDataSource.map(
+        (rootItem) => ({
+          ...rootItem,
+          children: rootItem.children.map((item) => ({
+            ...item,
+            duration: state.calcData[item.key]?.duration ?? item.duration,
+            coefficentByDuration:
+              state.calcData[item.key]?.coefficent ?? item.coefficentByDuration,
+          })),
+        })
+      );
     },
     calculateTotalDuration: (state) => {
-      state.totalDuration = Object.values(state.durationHash).reduce(
+      state.totalDuration = Object.values(state.calcData).reduce(
         (curr, next) => {
           return curr + next.duration;
         },
@@ -56,33 +60,43 @@ export const EfficientFormSlice = createSlice({
       );
     },
     calculateTotalCoefficentFromData: (state) => {
-      let test =
-        Object.values(state.durationHash).reduce(
-          (curr, next) => curr + next.coefficent,
-          0
-        ) / 24;
-      state.totalCoefficent = Number(test.toFixed(2));
+      let temp = Object.values(state.calcData).reduce(
+        (curr, next) => curr + next.coefficent,
+        0
+      );
+      if (state.currentTabId === EfficientTabs.individual) {
+        temp = Number((temp / 24).toFixed(2));
+      }
+      state.totalCoefficent = temp;
     },
+    setCurrentTabId: (state, action: PayloadAction<EfficientTabs>) => {
+      state.currentTabId = action.payload;
+    },
+    resetEfficientForm: () => initialState,
   },
 });
 
 export const {
-  setTotalCoefficent,
   resetTotalCoefficent,
-  changePersonalCalcData,
+  changepersonalCalcDataSource,
   calculateTotalDuration,
-  setDuration,
+  setCalcData,
   calculateTotalCoefficentFromData,
-} = EfficientFormSlice.actions;
+  resetCalcData,
+  setCurrentTabId,
+  resetEfficientForm,
+} = efficientFormSlice.actions;
 
 export const selectTotalCoefficent = (state: RootState) =>
   state.efficientForm.totalCoefficent;
 
-export const selectPersonalCalcData = (state: RootState) =>
-  state.efficientForm.personalCalcData;
+export const selectpersonalCalcDataSource = (state: RootState) =>
+  state.efficientForm.personalCalcDataSource;
 export const selectTotalDuration = (state: RootState) =>
   state.efficientForm.totalDuration;
-export const selectDurationHash = (state: RootState) =>
-  state.efficientForm.durationHash;
+export const selectCalcData = (state: RootState) =>
+  state.efficientForm.calcData;
+export const selectCurrentTabId = (state: RootState) =>
+  state.efficientForm.currentTabId;
 
-export const efficientFormReducer = EfficientFormSlice.reducer;
+export const efficientFormReducer = efficientFormSlice.reducer;

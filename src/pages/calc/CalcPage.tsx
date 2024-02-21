@@ -2,7 +2,7 @@ import { MainLayout, Steps } from 'components';
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { calcStepItems } from './const';
-import { ActivityForm, EfficientForm } from 'features';
+import { ActivityForm, EfficientForm, SummaryForm } from 'features';
 
 export const CalcPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,7 +27,7 @@ export const CalcPage: React.FC = () => {
       ></Steps>
       {currentStep === 0 && <ActivityForm />}
       {currentStep === 1 && <EfficientForm />}
-      {currentStep === 2 && <div>Шаг 3</div>}
+      {currentStep === 2 && <SummaryForm />}
     </MainLayout>
   );
 };

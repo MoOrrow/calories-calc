@@ -1,5 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { activityFormReducer, efficientFormReducer } from 'features';
+import {
+  activityFormReducer,
+  efficientFormReducer,
+  summaryFormReducer,
+} from 'features';
 
 const preloadedState = {};
 
@@ -7,6 +11,7 @@ export const store = configureStore({
   reducer: {
     activityForm: activityFormReducer,
     efficientForm: efficientFormReducer,
+    summaryForm: summaryFormReducer,
   },
   preloadedState,
 });

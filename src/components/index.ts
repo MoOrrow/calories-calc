@@ -12,3 +12,5 @@ export * from './FormItem';
 export * from './Tabs';
 export * from './Space';
 export * from './Table';
+export * from './Select';
+export * from './Tooltip';

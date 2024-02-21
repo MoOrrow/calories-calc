@@ -2,14 +2,6 @@ export const TITLE = 'Подсчет коэффициента физическо
 
 export const SLICE_NAME = 'EfficientForm';
 
-export const DEFAULT_CALC_VALUES = [
-  { id: 1, title: 'никаких физических нагрузок', value: 1.2 },
-  { id: 2, title: 'физические нагрузки 1-3 раза в неделю ', value: 1.375 },
-  { id: 3, title: 'физические нагрузки 3-5 дней в неделю', value: 1.55 },
-  { id: 4, title: 'физические нагрузки 6-7 раз в неделю', value: 1.725 },
-  { id: 5, title: 'тренировки чаще, чем раз в день', value: 1.9 },
-];
-
 export const PERSONAL_CALC = [
   {
     key: 1,
@@ -210,7 +202,12 @@ export const PERSONAL_CALC = [
   },
 ];
 
+export enum EfficientTabs {
+  default = '0',
+  individual = '1',
+}
+
 export const TAB_ITEMS = [
-  { label: 'Стандартные значения', id: 0 },
-  { label: 'Рассчитать индивидуально', id: 1 },
+  { label: 'Стандартные значения', id: EfficientTabs.default },
+  { label: 'Рассчитать индивидуально', id: EfficientTabs.individual },
 ];
