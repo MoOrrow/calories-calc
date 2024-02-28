@@ -11,7 +11,240 @@
     border-radius: 4px;
   }
 
+  .goal {
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+  }
   .goal-select {
     min-width: 240px;
+  }
+
+  .goal-input {
+    margin: 10px 0 0 0;
+  }
+
+  .fields {
+    margin: 30px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .data {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .input-field {
+    flex-direction: column;
+    display: flex;
+  }
+
+  .input-field + .input-field {
+    margin: 20px 0 0;
+  }
+
+  .input-prefix {
+    text-transform: capitalize;
+  }
+
+  .input-tooltip {
+    margin: 0 0 0 8px;
+  }
+
+  .input-wrapper {
+    margin: 10px 0 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .disclaimer-text {
+    color: helpers.$errorTextColor;
+  }
+
+  .calc-button-wrapper {
+    display: flex;
+    margin: 20px 0 0;
+  }
+
+  .result {
+    width: 100%;
+    margin: 40px 0 0;
+  }
+
+  .result-title {
+    font-weight: 500;
+    width: 100%;
+  }
+
+  .result-fields {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 15px 0 0;
+  }
+
+  .result-field {
+    width: 100%;
+  }
+
+  .result-field + .result-field {
+    margin: 20px 0 0;
+  }
+
+  .result-calories {
+    margin: 20px 0 0;
+  }
+  .result-content {
+    display: flex;
+    margin: 5px 0 0;
+  }
+
+  .calories-prefix,
+  .result-prefix {
+    font-size: 14px;
+  }
+
+  .calories-value {
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .result-value {
+    font-size: 16px;
+  }
+  .calories-value {
+    margin: 5px 0 0;
+  }
+  .result-gpk {
+    margin: 0 0 0 6px;
+    font-size: 12px;
+    color: helpers.$descriptionText;
+  }
+
+  .button-wrapper {
+    display: flex;
+    margin: 50px 0 0;
+  }
+
+  .disclaimer {
+    width: 300px;
+    margin: 20px 0 0;
+    text-align: center;
+  }
+
+  @include helpers.respond('md') {
+    .content-wrapper {
+      margin: 20px 0 0;
+      padding: 12px 20px;
+      background: helpers.$formBg;
+      border: 1px solid helpers.$formBorder;
+      border-radius: 4px;
+    }
+
+    .goal-select {
+      min-width: 240px;
+    }
+
+    .goal-input {
+      margin: 10px 0 0 0;
+    }
+
+    .fields {
+      margin: 30px 0 0;
+      flex-wrap: nowrap;
+    }
+
+    .data {
+      flex-shrink: 0;
+    }
+
+    .input-field {
+      flex-direction: row;
+      align-items: center;
+      justify-content: end;
+    }
+
+    .input-field + .input-field {
+      margin: 20px 0 0;
+    }
+
+    .input-prefix {
+      margin: 0 12px 0 0;
+    }
+
+    .input-tooltip {
+      margin: 0 0 0 8px;
+    }
+
+    .input-wrapper {
+      margin: 0;
+    }
+
+    .calc-button-wrapper {
+      margin: 40px 0 0;
+    }
+
+    .result {
+      margin: 0 0 0 50px;
+    }
+
+    .result-fields {
+      margin: 0;
+    }
+
+    .result-field {
+      width: 50%;
+      margin: 15px 0 0;
+    }
+
+    .result-field + .result-field {
+      margin: 15px 0 0;
+    }
+
+    .result-calories {
+      margin: 20px 0 0;
+    }
+
+    .result-content {
+      display: flex;
+      margin: 5px 0 0;
+    }
+
+    .calories-prefix,
+    .result-prefix {
+      font-size: 18px;
+    }
+
+    .calories-value {
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .result-value {
+      font-size: 16px;
+    }
+    .calories-value {
+      margin: 5px 0 0;
+    }
+    .result-gpk {
+      margin: 0 0 0 6px;
+      font-size: 12px;
+      color: helpers.$descriptionText;
+    }
+
+    .button-wrapper {
+      display: flex;
+      margin: 50px 0 0;
+    }
+  }
+  @include helpers.respond('lg') {
+    .result {
+      margin: 0 0 0 150px;
+    }
+    .result-field {
+      width: 200px;
+    }
   }
 }

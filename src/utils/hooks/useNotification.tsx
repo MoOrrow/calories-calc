@@ -11,6 +11,7 @@ export enum NotificationTypes {
 export type TOpenNotification = {
   type: NotificationTypes;
   config: NotificationArgsProps;
+  stack?: boolean;
 };
 
 export const useNotification = () => {
@@ -21,8 +22,11 @@ export const useNotification = () => {
     openNotification: ({
       type,
       config: { duration = 2, ...restConfig },
+      stack = false,
     }: TOpenNotification) => {
-      api.destroy();
+      if (!stack) {
+        api.destroy();
+      }
       api[type]({
         className: cn('notification', `notification-${type}`),
         duration,
